@@ -15,12 +15,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/sipeed/picoclaw/pkg/bus"
-	"github.com/sipeed/picoclaw/pkg/constants"
-	"github.com/sipeed/picoclaw/pkg/fileutil"
-	"github.com/sipeed/picoclaw/pkg/logger"
-	"github.com/sipeed/picoclaw/pkg/state"
-	"github.com/sipeed/picoclaw/pkg/tools"
+	"study/picoclaw/pkg/bus"
+	"study/picoclaw/pkg/constants"
+	"study/picoclaw/pkg/fileutil"
+	"study/picoclaw/pkg/logger"
+	"study/picoclaw/pkg/state"
+	"study/picoclaw/pkg/tools"
 )
 
 const (

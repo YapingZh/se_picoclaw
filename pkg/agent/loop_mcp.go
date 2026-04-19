@@ -11,10 +11,10 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/sipeed/picoclaw/pkg/config"
-	"github.com/sipeed/picoclaw/pkg/logger"
-	"github.com/sipeed/picoclaw/pkg/mcp"
-	"github.com/sipeed/picoclaw/pkg/tools"
+	"study/picoclaw/pkg/config"
+	"study/picoclaw/pkg/logger"
+	"study/picoclaw/pkg/mcp"
+	"study/picoclaw/pkg/tools"
 )
 
 type mcpRuntime struct {

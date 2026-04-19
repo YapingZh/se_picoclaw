@@ -3,7 +3,7 @@
 package pkg
 
 const (
-	Logo = "🦞"
+	Logo = "SE"
 	// AppName is the name of the app
 	AppName = "PicoClaw"
 

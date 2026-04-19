@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"os"
 
-	"github.com/sipeed/picoclaw/pkg/logger"
+	"study/picoclaw/pkg/logger"
 )
 
 const DefaultGatewayLogLevel = "warn"

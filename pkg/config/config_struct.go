@@ -10,8 +10,8 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"github.com/sipeed/picoclaw/pkg/credential"
-	"github.com/sipeed/picoclaw/pkg/logger"
+	"study/picoclaw/pkg/credential"
+	"study/picoclaw/pkg/logger"
 )
 
 // FlexibleStringSlice is a []string that also accepts JSON numbers,

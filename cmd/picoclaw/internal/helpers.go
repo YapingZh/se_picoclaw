@@ -4,9 +4,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/sipeed/picoclaw/pkg"
-	"github.com/sipeed/picoclaw/pkg/config"
-	"github.com/sipeed/picoclaw/pkg/logger"
+	"study/picoclaw/pkg"
+	"study/picoclaw/pkg/config"
+	"study/picoclaw/pkg/logger"
 )
 
 const Logo = pkg.Logo

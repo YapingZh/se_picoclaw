@@ -17,8 +17,8 @@ import (
 	"github.com/mdp/qrterminal/v3"
 	"github.com/spf13/cobra"
 
-	"github.com/sipeed/picoclaw/cmd/picoclaw/internal"
-	"github.com/sipeed/picoclaw/pkg/config"
+	"study/picoclaw/cmd/picoclaw/internal"
+	"study/picoclaw/pkg/config"
 )
 
 const (

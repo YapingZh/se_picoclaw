@@ -11,10 +11,10 @@ import (
 	"strings"
 	"time"
 
-	basechannels "github.com/sipeed/picoclaw/pkg/channels"
-	"github.com/sipeed/picoclaw/pkg/config"
-	"github.com/sipeed/picoclaw/pkg/fileutil"
-	"github.com/sipeed/picoclaw/pkg/logger"
+	basechannels "study/picoclaw/pkg/channels"
+	"study/picoclaw/pkg/config"
+	"study/picoclaw/pkg/fileutil"
+	"study/picoclaw/pkg/logger"
 )
 
 const (

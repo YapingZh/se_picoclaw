@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/sipeed/picoclaw/cmd/picoclaw/internal"
-	"github.com/sipeed/picoclaw/pkg/auth"
-	"github.com/sipeed/picoclaw/pkg/config"
+	"study/picoclaw/cmd/picoclaw/internal"
+	"study/picoclaw/pkg/auth"
+	"study/picoclaw/pkg/config"
 )
 
 func statusCmd() {

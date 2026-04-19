@@ -12,9 +12,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/sipeed/picoclaw/pkg/config"
-	"github.com/sipeed/picoclaw/pkg/isolation"
-	"github.com/sipeed/picoclaw/pkg/providers"
+	"study/picoclaw/pkg/config"
+	"study/picoclaw/pkg/isolation"
+	"study/picoclaw/pkg/providers"
 )
 
 func TestProcessHook_HelperProcess(t *testing.T) {

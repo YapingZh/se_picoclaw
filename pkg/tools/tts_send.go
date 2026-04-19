@@ -4,8 +4,8 @@ import (
 	"context"
 	"strings"
 
-	"github.com/sipeed/picoclaw/pkg/audio/tts"
-	"github.com/sipeed/picoclaw/pkg/media"
+	"study/picoclaw/pkg/audio/tts"
+	"study/picoclaw/pkg/media"
 )
 
 type SendTTSTool struct {

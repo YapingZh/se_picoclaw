@@ -4,8 +4,8 @@ import (
 	"context"
 	"strings"
 
-	"github.com/sipeed/picoclaw/pkg/config"
-	"github.com/sipeed/picoclaw/pkg/providers"
+	"study/picoclaw/pkg/config"
+	"study/picoclaw/pkg/providers"
 )
 
 type Transcriber interface {

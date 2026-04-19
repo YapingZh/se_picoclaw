@@ -9,7 +9,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/sipeed/picoclaw/pkg"
+	"study/picoclaw/pkg"
 )
 
 // Runtime environment variable keys for the picoclaw process.

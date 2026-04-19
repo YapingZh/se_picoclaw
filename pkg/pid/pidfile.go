@@ -11,8 +11,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/sipeed/picoclaw/pkg/config"
-	"github.com/sipeed/picoclaw/pkg/logger"
+	"study/picoclaw/pkg/config"
+	"study/picoclaw/pkg/logger"
 )
 
 const pidFileName = ".picoclaw.pid"

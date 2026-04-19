@@ -8,9 +8,9 @@ import (
 
 	"golang.org/x/term"
 
-	"github.com/sipeed/picoclaw/cmd/picoclaw/internal"
-	"github.com/sipeed/picoclaw/pkg/config"
-	"github.com/sipeed/picoclaw/pkg/credential"
+	"study/picoclaw/cmd/picoclaw/internal"
+	"study/picoclaw/pkg/config"
+	"study/picoclaw/pkg/credential"
 )
 
 func onboard(encrypt bool) {
@@ -83,20 +83,13 @@ func onboard(encrypt bool) {
 	fmt.Println("\nNext steps:")
 	if encrypt {
 		fmt.Println("  1. Set your encryption passphrase before starting picoclaw:")
-		fmt.Println("       export PICOCLAW_KEY_PASSPHRASE=<your-passphrase>   # Linux/macOS")
-		fmt.Println("       set PICOCLAW_KEY_PASSPHRASE=<your-passphrase>      # Windows cmd")
+		fmt.Println("       export PICOCLAW_KEY_PASSPHRASE=<your-passphrase>")
 		fmt.Println("")
 		fmt.Println("  2. Add your API key to", configPath)
 	} else {
 		fmt.Println("  1. Add your API key to", configPath)
 	}
-	fmt.Println("")
-	fmt.Println("     Recommended:")
-	fmt.Println("     - OpenRouter: https://openrouter.ai/keys (access 100+ models)")
-	fmt.Println("     - Ollama:     https://ollama.com (local, free)")
-	fmt.Println("")
-	fmt.Println("     See README.md for 17+ supported providers.")
-	fmt.Println("")
+
 	if encrypt {
 		fmt.Println("  3. Chat: picoclaw agent -m \"Hello!\"")
 	} else {

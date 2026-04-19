@@ -7,7 +7,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/sipeed/picoclaw/pkg/providers"
+	"study/picoclaw/pkg/providers"
 )
 
 // SubTurnSpawner is an interface for spawning sub-turns.

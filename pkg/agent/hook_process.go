@@ -12,9 +12,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/sipeed/picoclaw/pkg/isolation"
-	"github.com/sipeed/picoclaw/pkg/logger"
-	"github.com/sipeed/picoclaw/pkg/tools"
+	"study/picoclaw/pkg/isolation"
+	"study/picoclaw/pkg/logger"
+	"study/picoclaw/pkg/tools"
 )
 
 const (

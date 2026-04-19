@@ -18,12 +18,12 @@ import (
 
 	"golang.org/x/time/rate"
 
-	"github.com/sipeed/picoclaw/pkg/bus"
-	"github.com/sipeed/picoclaw/pkg/config"
-	"github.com/sipeed/picoclaw/pkg/constants"
-	"github.com/sipeed/picoclaw/pkg/health"
-	"github.com/sipeed/picoclaw/pkg/logger"
-	"github.com/sipeed/picoclaw/pkg/media"
+	"study/picoclaw/pkg/bus"
+	"study/picoclaw/pkg/config"
+	"study/picoclaw/pkg/constants"
+	"study/picoclaw/pkg/health"
+	"study/picoclaw/pkg/logger"
+	"study/picoclaw/pkg/media"
 )
 
 const (

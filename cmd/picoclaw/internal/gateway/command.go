@@ -5,10 +5,10 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/sipeed/picoclaw/cmd/picoclaw/internal"
-	"github.com/sipeed/picoclaw/pkg/gateway"
-	"github.com/sipeed/picoclaw/pkg/logger"
-	"github.com/sipeed/picoclaw/pkg/utils"
+	"study/picoclaw/cmd/picoclaw/internal"
+	"study/picoclaw/pkg/gateway"
+	"study/picoclaw/pkg/logger"
+	"study/picoclaw/pkg/utils"
 )
 
 func NewGatewayCommand() *cobra.Command {

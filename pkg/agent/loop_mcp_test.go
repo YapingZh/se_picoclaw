@@ -9,7 +9,7 @@ package agent
 import (
 	"testing"
 
-	"github.com/sipeed/picoclaw/pkg/config"
+	"study/picoclaw/pkg/config"
 )
 
 func boolPtr(b bool) *bool { return &b }

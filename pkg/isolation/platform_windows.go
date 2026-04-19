@@ -11,8 +11,8 @@ import (
 
 	"golang.org/x/sys/windows"
 
-	"github.com/sipeed/picoclaw/pkg/config"
-	"github.com/sipeed/picoclaw/pkg/logger"
+	"study/picoclaw/pkg/config"
+	"study/picoclaw/pkg/logger"
 )
 
 const disableMaxPrivilege = 0x1

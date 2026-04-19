@@ -10,7 +10,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/sipeed/picoclaw/pkg/utils"
+	"study/picoclaw/pkg/utils"
 )
 
 const (

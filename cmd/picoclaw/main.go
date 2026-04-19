@@ -13,20 +13,22 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/sipeed/picoclaw/cmd/picoclaw/internal"
-	"github.com/sipeed/picoclaw/cmd/picoclaw/internal/agent"
-	"github.com/sipeed/picoclaw/cmd/picoclaw/internal/auth"
-	"github.com/sipeed/picoclaw/cmd/picoclaw/internal/cron"
-	"github.com/sipeed/picoclaw/cmd/picoclaw/internal/gateway"
-	"github.com/sipeed/picoclaw/cmd/picoclaw/internal/migrate"
-	"github.com/sipeed/picoclaw/cmd/picoclaw/internal/model"
-	"github.com/sipeed/picoclaw/cmd/picoclaw/internal/onboard"
-	"github.com/sipeed/picoclaw/cmd/picoclaw/internal/skills"
-	"github.com/sipeed/picoclaw/cmd/picoclaw/internal/status"
-	"github.com/sipeed/picoclaw/cmd/picoclaw/internal/version"
-	"github.com/sipeed/picoclaw/pkg/config"
-	"github.com/sipeed/picoclaw/pkg/updater"
+	"study/picoclaw/cmd/picoclaw/internal"
+	"study/picoclaw/cmd/picoclaw/internal/agent"
+	"study/picoclaw/cmd/picoclaw/internal/auth"
+	"study/picoclaw/cmd/picoclaw/internal/cron"
+	"study/picoclaw/cmd/picoclaw/internal/gateway"
+	"study/picoclaw/cmd/picoclaw/internal/model"
+	"study/picoclaw/cmd/picoclaw/internal/onboard"
+	"study/picoclaw/cmd/picoclaw/internal/skills"
+	"study/picoclaw/cmd/picoclaw/internal/status"
+	"study/picoclaw/cmd/picoclaw/internal/version"
+	"study/picoclaw/pkg/config"
+	"study/picoclaw/pkg/updater"
 )
+
+func init() {
+}
 
 func NewPicoclawCommand() *cobra.Command {
 	short := fmt.Sprintf("%s picoclaw - Personal AI Assistant %s\n\n", internal.Logo, config.GetVersion())
@@ -44,7 +46,6 @@ func NewPicoclawCommand() *cobra.Command {
 		gateway.NewGatewayCommand(),
 		status.NewStatusCommand(),
 		cron.NewCronCommand(),
-		migrate.NewMigrateCommand(),
 		skills.NewSkillsCommand(),
 		model.NewModelCommand(),
 		updater.NewUpdateCommand("picoclaw"),
@@ -54,22 +55,7 @@ func NewPicoclawCommand() *cobra.Command {
 	return cmd
 }
 
-const (
-	colorBlue = "\033[1;38;2;62;93;185m"
-	colorRed  = "\033[1;38;2;213;70;70m"
-	banner    = "\r\n" +
-		colorBlue + "██████╗ ██╗ ██████╗ ██████╗ " + colorRed + " ██████╗██╗      █████╗ ██╗    ██╗\n" +
-		colorBlue + "██╔══██╗██║██╔════╝██╔═══██╗" + colorRed + "██╔════╝██║     ██╔══██╗██║    ██║\n" +
-		colorBlue + "██████╔╝██║██║     ██║   ██║" + colorRed + "██║     ██║     ███████║██║ █╗ ██║\n" +
-		colorBlue + "██╔═══╝ ██║██║     ██║   ██║" + colorRed + "██║     ██║     ██╔══██║██║███╗██║\n" +
-		colorBlue + "██║     ██║╚██████╗╚██████╔╝" + colorRed + "╚██████╗███████╗██║  ██║╚███╔███╔╝\n" +
-		colorBlue + "╚═╝     ╚═╝ ╚═════╝ ╚═════╝ " + colorRed + " ╚═════╝╚══════╝╚═╝  ╚═╝ ╚══╝╚══╝\n " +
-		"\033[0m\r\n"
-)
-
 func main() {
-	fmt.Printf("%s", banner)
-
 	tz_env := os.Getenv("TZ")
 	if tz_env != "" {
 		fmt.Println("TZ environment:", tz_env)

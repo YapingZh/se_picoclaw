@@ -10,10 +10,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/sipeed/picoclaw/cmd/picoclaw/internal"
-	"github.com/sipeed/picoclaw/pkg/auth"
-	"github.com/sipeed/picoclaw/pkg/config"
-	"github.com/sipeed/picoclaw/pkg/providers"
+	"study/picoclaw/cmd/picoclaw/internal"
+	"study/picoclaw/pkg/auth"
+	"study/picoclaw/pkg/config"
+	"study/picoclaw/pkg/providers"
 )
 
 const (

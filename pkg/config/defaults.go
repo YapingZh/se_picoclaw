@@ -8,7 +8,7 @@ package config
 import (
 	"path/filepath"
 
-	"github.com/sipeed/picoclaw/pkg"
+	"study/picoclaw/pkg"
 )
 
 // DefaultConfig returns the default configuration for PicoClaw.

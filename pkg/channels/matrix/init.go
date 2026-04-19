@@ -3,9 +3,9 @@ package matrix
 import (
 	"path/filepath"
 
-	"github.com/sipeed/picoclaw/pkg/bus"
-	"github.com/sipeed/picoclaw/pkg/channels"
-	"github.com/sipeed/picoclaw/pkg/config"
+	"study/picoclaw/pkg/bus"
+	"study/picoclaw/pkg/channels"
+	"study/picoclaw/pkg/config"
 )
 
 func init() {

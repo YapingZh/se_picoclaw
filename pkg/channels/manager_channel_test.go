@@ -5,8 +5,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/sipeed/picoclaw/pkg/config"
-	"github.com/sipeed/picoclaw/pkg/logger"
+	"study/picoclaw/pkg/config"
+	"study/picoclaw/pkg/logger"
 )
 
 func TestToChannelHashes(t *testing.T) {

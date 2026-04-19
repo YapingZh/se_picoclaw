@@ -7,9 +7,9 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/sipeed/picoclaw/cmd/picoclaw/internal"
-	"github.com/sipeed/picoclaw/pkg/channels/weixin"
-	"github.com/sipeed/picoclaw/pkg/config"
+	"study/picoclaw/cmd/picoclaw/internal"
+	"study/picoclaw/pkg/channels/weixin"
+	"study/picoclaw/pkg/config"
 )
 
 func newWeixinCommand() *cobra.Command {

@@ -8,9 +8,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/sipeed/picoclaw/pkg/logger"
-	"github.com/sipeed/picoclaw/pkg/media"
-	"github.com/sipeed/picoclaw/pkg/providers"
+	"study/picoclaw/pkg/logger"
+	"study/picoclaw/pkg/media"
+	"study/picoclaw/pkg/providers"
 )
 
 type ToolEntry struct {

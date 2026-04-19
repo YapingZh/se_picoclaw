@@ -24,10 +24,10 @@ import (
 	"github.com/google/uuid"
 	"github.com/h2non/filetype"
 
-	"github.com/sipeed/picoclaw/pkg/bus"
-	basechannels "github.com/sipeed/picoclaw/pkg/channels"
-	"github.com/sipeed/picoclaw/pkg/logger"
-	"github.com/sipeed/picoclaw/pkg/media"
+	"study/picoclaw/pkg/bus"
+	basechannels "study/picoclaw/pkg/channels"
+	"study/picoclaw/pkg/logger"
+	"study/picoclaw/pkg/media"
 )
 
 const (

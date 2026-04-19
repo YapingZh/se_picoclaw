@@ -11,11 +11,11 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/sipeed/picoclaw/pkg/bus"
-	"github.com/sipeed/picoclaw/pkg/config"
-	"github.com/sipeed/picoclaw/pkg/identity"
-	"github.com/sipeed/picoclaw/pkg/logger"
-	"github.com/sipeed/picoclaw/pkg/media"
+	"study/picoclaw/pkg/bus"
+	"study/picoclaw/pkg/config"
+	"study/picoclaw/pkg/identity"
+	"study/picoclaw/pkg/logger"
+	"study/picoclaw/pkg/media"
 )
 
 var (

@@ -1,4 +1,4 @@
-module github.com/sipeed/picoclaw
+module study/picoclaw
 
 go 1.25.9
 

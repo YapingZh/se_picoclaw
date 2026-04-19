@@ -7,11 +7,11 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/sipeed/picoclaw/pkg/bus"
-	"github.com/sipeed/picoclaw/pkg/logger"
-	"github.com/sipeed/picoclaw/pkg/providers"
-	"github.com/sipeed/picoclaw/pkg/session"
-	"github.com/sipeed/picoclaw/pkg/tools"
+	"study/picoclaw/pkg/bus"
+	"study/picoclaw/pkg/logger"
+	"study/picoclaw/pkg/providers"
+	"study/picoclaw/pkg/session"
+	"study/picoclaw/pkg/tools"
 )
 
 type TurnPhase string

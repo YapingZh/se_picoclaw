@@ -14,8 +14,8 @@ import (
 	"maunium.net/go/mautrix/event"
 	"maunium.net/go/mautrix/id"
 
-	"github.com/sipeed/picoclaw/pkg/config"
-	"github.com/sipeed/picoclaw/pkg/media"
+	"study/picoclaw/pkg/config"
+	"study/picoclaw/pkg/media"
 )
 
 func TestMatrixLocalpartMentionRegexp(t *testing.T) {

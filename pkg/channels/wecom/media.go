@@ -20,8 +20,8 @@ import (
 
 	"github.com/h2non/filetype"
 
-	"github.com/sipeed/picoclaw/pkg/bus"
-	"github.com/sipeed/picoclaw/pkg/media"
+	"study/picoclaw/pkg/bus"
+	"study/picoclaw/pkg/media"
 )
 
 const (

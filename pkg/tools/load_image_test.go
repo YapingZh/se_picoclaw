@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/sipeed/picoclaw/pkg/config"
-	"github.com/sipeed/picoclaw/pkg/media"
-	"github.com/sipeed/picoclaw/pkg/providers"
+	"study/picoclaw/pkg/config"
+	"study/picoclaw/pkg/media"
+	"study/picoclaw/pkg/providers"
 )
 
 func TestLoadImage_PathRequired(t *testing.T) {

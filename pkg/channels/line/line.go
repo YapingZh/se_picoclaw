@@ -14,13 +14,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/sipeed/picoclaw/pkg/bus"
-	"github.com/sipeed/picoclaw/pkg/channels"
-	"github.com/sipeed/picoclaw/pkg/config"
-	"github.com/sipeed/picoclaw/pkg/identity"
-	"github.com/sipeed/picoclaw/pkg/logger"
-	"github.com/sipeed/picoclaw/pkg/media"
-	"github.com/sipeed/picoclaw/pkg/utils"
+	"study/picoclaw/pkg/bus"
+	"study/picoclaw/pkg/channels"
+	"study/picoclaw/pkg/config"
+	"study/picoclaw/pkg/identity"
+	"study/picoclaw/pkg/logger"
+	"study/picoclaw/pkg/media"
+	"study/picoclaw/pkg/utils"
 )
 
 const (

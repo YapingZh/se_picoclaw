@@ -12,11 +12,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/sipeed/picoclaw/pkg/config"
-	"github.com/sipeed/picoclaw/pkg/logger"
-	"github.com/sipeed/picoclaw/pkg/providers"
-	"github.com/sipeed/picoclaw/pkg/skills"
-	"github.com/sipeed/picoclaw/pkg/utils"
+	"study/picoclaw/pkg/config"
+	"study/picoclaw/pkg/logger"
+	"study/picoclaw/pkg/providers"
+	"study/picoclaw/pkg/skills"
+	"study/picoclaw/pkg/utils"
 )
 
 type ContextBuilder struct {
@@ -84,7 +84,7 @@ func (cb *ContextBuilder) getIdentity() string {
 	version := config.FormatVersion()
 
 	return fmt.Sprintf(
-		`# picoclaw 🦞 (%s)
+		`# WuKong 🙈 (%s)
 
 You are picoclaw, a helpful AI assistant.
 
