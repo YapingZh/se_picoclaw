@@ -11,12 +11,22 @@ export interface ChatAttachment {
   filename?: string
 }
 
+export type AssistantMessageKind = "normal" | "thought"
+
 export interface ChatMessage {
   id: string
   role: "user" | "assistant"
   content: string
   timestamp: number | string
+  kind?: AssistantMessageKind
   attachments?: ChatAttachment[]
+}
+
+export interface ContextUsage {
+  used_tokens: number
+  total_tokens: number
+  compress_at_tokens: number
+  used_percent: number
 }
 
 export type ConnectionState =
@@ -31,6 +41,7 @@ export interface ChatStoreState {
   isTyping: boolean
   activeSessionId: string
   hasHydratedActiveSession: boolean
+  contextUsage?: ContextUsage
 }
 
 type ChatStorePatch = Partial<ChatStoreState>
@@ -44,6 +55,8 @@ const DEFAULT_CHAT_STATE: ChatStoreState = {
 }
 
 export const chatAtom = atom<ChatStoreState>(DEFAULT_CHAT_STATE)
+
+export const showThoughtsAtom = atom<boolean>(true)
 
 const store = getDefaultStore()
 

@@ -1,7 +1,11 @@
 import { toast } from "sonner"
 
 import { normalizeUnixTimestamp } from "@/features/chat/state"
-import { updateChatStore } from "@/store/chat"
+import {
+  type AssistantMessageKind,
+  type ContextUsage,
+  updateChatStore,
+} from "@/store/chat"
 
 export interface PicoMessage {
   type: string
@@ -9,6 +13,34 @@ export interface PicoMessage {
   session_id?: string
   timestamp?: number | string
   payload?: Record<string, unknown>
+}
+
+function parseAssistantMessageKind(
+  payload: Record<string, unknown>,
+): AssistantMessageKind {
+  return payload.thought === true ? "thought" : "normal"
+}
+
+function hasAssistantKindPayload(payload: Record<string, unknown>): boolean {
+  return typeof payload.thought === "boolean"
+}
+
+function parseContextUsage(
+  payload: Record<string, unknown>,
+): ContextUsage | undefined {
+  const raw = payload.context_usage
+  if (!raw || typeof raw !== "object") return undefined
+  const obj = raw as Record<string, unknown>
+  const used = Number(obj.used_tokens)
+  const total = Number(obj.total_tokens)
+  if (!Number.isFinite(used) || !Number.isFinite(total) || total <= 0)
+    return undefined
+  return {
+    used_tokens: used,
+    total_tokens: total,
+    compress_at_tokens: Number(obj.compress_at_tokens) || 0,
+    used_percent: Number(obj.used_percent) || 0,
+  }
 }
 
 export function handlePicoMessage(
@@ -25,6 +57,8 @@ export function handlePicoMessage(
     case "message.create": {
       const content = (payload.content as string) || ""
       const messageId = (payload.message_id as string) || `pico-${Date.now()}`
+      const kind = parseAssistantMessageKind(payload)
+      const contextUsage = parseContextUsage(payload)
       const timestamp =
         message.timestamp !== undefined &&
         Number.isFinite(Number(message.timestamp))
@@ -38,10 +72,12 @@ export function handlePicoMessage(
             id: messageId,
             role: "assistant",
             content,
+            kind,
             timestamp,
           },
         ],
         isTyping: false,
+        ...(contextUsage ? { contextUsage } : {}),
       }))
       break
     }
@@ -49,13 +85,21 @@ export function handlePicoMessage(
     case "message.update": {
       const content = (payload.content as string) || ""
       const messageId = payload.message_id as string
+      const hasKind = hasAssistantKindPayload(payload)
+      const kind = parseAssistantMessageKind(payload)
       if (!messageId) {
         break
       }
 
       updateChatStore((prev) => ({
         messages: prev.messages.map((msg) =>
-          msg.id === messageId ? { ...msg, content } : msg,
+          msg.id === messageId
+            ? {
+                ...msg,
+                content,
+                ...(hasKind ? { kind } : {}),
+              }
+            : msg,
         ),
       }))
       break

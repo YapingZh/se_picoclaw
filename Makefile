@@ -1,4 +1,4 @@
-.PHONY: all build install uninstall clean help test
+.PHONY: all build install uninstall clean help test build-all lint-docs
 
 # Build variables
 BINARY_NAME=picoclaw
@@ -197,6 +197,17 @@ build-linux-arm64: generate
 	GOOS=linux GOARCH=arm64 $(GO) build $(GOFLAGS) -ldflags "$(LDFLAGS)" -o $(BUILD_DIR)/$(BINARY_NAME)-linux-arm64 ./$(CMD_DIR)
 	@echo "Build complete: $(BUILD_DIR)/$(BINARY_NAME)-linux-arm64"
 
+build-launcher-arm64:generate
+	@echo "Building picoclaw-launcher-arm64 for $(PLATFORM)/$(ARCH)..."
+	@mkdir -p $(BUILD_DIR)
+	GOOS=linux GOARCH=arm64 PLATFORM=linux $(MAKE) -C web build \
+                OUTPUT="$(CURDIR)/$(BUILD_DIR)/picoclaw-launcher-$(PLATFORM)-$(ARCH)$(EXT)" \
+                WEB_GO='$(WEB_GO)' \
+                GO_BUILD_TAGS='$(GO_BUILD_TAGS)' \
+                LDFLAGS='$(LDFLAGS)'
+	@$(LNCMD) picoclaw-launcher-$(PLATFORM)-$(ARCH)$(EXT) $(BUILD_DIR)/picoclaw-launcher$(EXT)
+	@echo "Build complete: $(BUILD_DIR)/picoclaw-launcher-arm64$(EXT)"
+
 ## build-linux-mipsle: Build for Linux MIPS32 LE
 build-linux-mipsle: generate
 	@echo "Building for linux/mipsle (softfloat)..."
@@ -205,11 +216,44 @@ build-linux-mipsle: generate
 	$(call PATCH_MIPS_FLAGS,$(BUILD_DIR)/$(BINARY_NAME)-linux-mipsle)
 	@echo "Build complete: $(BUILD_DIR)/$(BINARY_NAME)-linux-mipsle"
 
+## build-android-arm64: Build core for Android ARM64
+build-android-arm64: generate
+	@echo "Building for android/arm64..."
+	@mkdir -p $(BUILD_DIR)
+	GOOS=android GOARCH=arm64 $(GO) build -tags stdjson -ldflags "$(LDFLAGS)" -o $(BUILD_DIR)/$(BINARY_NAME)-android-arm64 ./$(CMD_DIR)
+	@echo "Build complete: $(BUILD_DIR)/$(BINARY_NAME)-android-arm64"
+
+## build-launcher-android-arm64: Build launcher for Android ARM64
+build-launcher-android-arm64:
+	@echo "Building picoclaw-launcher for android/arm64..."
+	@mkdir -p $(BUILD_DIR)
+	@$(MAKE) -C web build-android-arm64 \
+		OUTPUT_ANDROID_ARM64="$(CURDIR)/$(BUILD_DIR)/picoclaw-launcher-android-arm64" \
+		GO='$(GO)' \
+		LDFLAGS='$(LDFLAGS)'
+	@echo "Build complete: $(BUILD_DIR)/picoclaw-launcher-android-arm64"
+
+## build-android-bundle: Build core and launcher for all Android architectures and package as universal zip
+build-android-bundle: generate
+	@echo "Building core for all Android architectures..."
+	@mkdir -p $(BUILD_DIR)
+	GOOS=android GOARCH=arm64 $(GO) build -tags stdjson -ldflags "$(LDFLAGS)" -o $(BUILD_DIR)/$(BINARY_NAME)-android-arm64 ./$(CMD_DIR)
+	@echo "Building launcher for Android arm64..."
+	@$(MAKE) build-launcher-android-arm64
+	@echo "Staging JNI libs..."
+	@rm -rf $(BUILD_DIR)/android-staging
+	@mkdir -p $(BUILD_DIR)/android-staging/arm64-v8a
+	@cp $(BUILD_DIR)/$(BINARY_NAME)-android-arm64 $(BUILD_DIR)/android-staging/arm64-v8a/libpicoclaw.so
+	@cp $(BUILD_DIR)/picoclaw-launcher-android-arm64 $(BUILD_DIR)/android-staging/arm64-v8a/libpicoclaw-web.so
+	@cd $(BUILD_DIR)/android-staging && zip -r ../picoclaw-android-universal.zip .
+	@rm -rf $(BUILD_DIR)/android-staging
+	@echo "All Android builds complete: $(BUILD_DIR)/picoclaw-android-universal.zip"
+
 ## build-pi-zero: Build for Raspberry Pi Zero 2 W (32-bit and 64-bit)
 build-pi-zero: build-linux-arm build-linux-arm64
 	@echo "Pi Zero 2 W builds: $(BUILD_DIR)/$(BINARY_NAME)-linux-arm (32-bit), $(BUILD_DIR)/$(BINARY_NAME)-linux-arm64 (64-bit)"
 
-## build-all: Build picoclaw for all platforms
+## build-all: Build the picoclaw core binary for all Makefile-managed platforms
 build-all: generate
 	@echo "Building for multiple platforms..."
 	@mkdir -p $(BUILD_DIR)
@@ -226,7 +270,7 @@ build-all: generate
 	GOOS=windows GOARCH=amd64 $(GO) build $(GOFLAGS) -ldflags "$(LDFLAGS)" -o $(BUILD_DIR)/$(BINARY_NAME)-windows-amd64.exe ./$(CMD_DIR)
 	GOOS=netbsd GOARCH=amd64 $(GO) build $(GOFLAGS) -ldflags "$(LDFLAGS)" -o $(BUILD_DIR)/$(BINARY_NAME)-netbsd-amd64 ./$(CMD_DIR)
 	GOOS=netbsd GOARCH=arm64 $(GO) build $(GOFLAGS) -ldflags "$(LDFLAGS)" -o $(BUILD_DIR)/$(BINARY_NAME)-netbsd-arm64 ./$(CMD_DIR)
-	@echo "All builds complete"
+	@echo "Core builds complete"
 
 ## install: Install picoclaw to system and copy builtin skills
 install: build
@@ -275,9 +319,14 @@ test: generate
 fmt:
 	@$(GOLANGCI_LINT) fmt
 
+## lint-docs: Check common documentation layout and naming conventions
+lint-docs:
+	@./scripts/lint-docs.sh
+
 ## lint: Run linters
 lint:
 	@$(GOLANGCI_LINT) run --build-tags $(GO_BUILD_TAGS)
+	@./scripts/lint-docs.sh
 
 ## fix: Fix linting issues
 fix:
@@ -293,8 +342,8 @@ update-deps:
 	@$(GO) get -u ./...
 	@$(GO) mod tidy
 
-## check: Run vet, fmt, and verify dependencies
-check: deps fmt vet test
+## check: Run deps, fmt, vet, tests, and docs consistency checks
+check: deps fmt vet test lint-docs
 
 ## run: Build and run picoclaw
 run: build
