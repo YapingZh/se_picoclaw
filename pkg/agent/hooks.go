@@ -622,6 +622,10 @@ func runInterceptorHook[T any](
 ) (T, HookDecision, bool) {
 	var zero T
 
+	/*if name == "text2audio-Hook" {
+		timeout = 6 * time.Minute
+	}*/
+
 	ctx, cancel := context.WithTimeout(parent, timeout)
 	defer cancel()
 
