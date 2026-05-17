@@ -6,38 +6,84 @@ import (
     "os/exec"
     "bytes"
     "strings"
+    "time"
 
     "github.com/sipeed/picoclaw/pkg/logger"
-    "github.com/sipeed/picoclaw/pkg/providers"
+    //"github.com/sipeed/picoclaw/pkg/providers"
+    "github.com/sipeed/picoclaw/pkg/bus"
+    "github.com/sipeed/picoclaw/pkg/session"
 )
 
 type Text2audioHook struct{}
 
-var globalQueue = make(chan string, 1000)
+//var globalQueue = make(chan string, 1000)
 var globalReqImgBytes string
+var globalVoiceId string
+var globalVLUserPromt string
+var msgBus *bus.MessageBus
 
+func (h *Text2audioHook) SetBus(bus *bus.MessageBus) { 
+	msgBus = bus 
+	globalVLUserPromt = ""
+	globalReqImgBytes = ""
+	globalVoiceId = ""
+}
 func (h *Text2audioHook) Name() string { return "text2audio" }
+
+func CallTTSModel(Response string) {
+	cmd_kill := exec.Command("pkill", "-f", "text2auto.py")
+        _, err_kill := cmd_kill.CombinedOutput()
+        if err_kill != nil {
+                if exitErr, ok := err_kill.(*exec.ExitError); ok {
+                        if exitErr.ExitCode() == 1 {
+                                err_kill = nil
+                        }else {
+                                time.Sleep(3 * time.Second)
+                        }
+                } else{
+                        time.Sleep(3 * time.Second)
+                }
+        } else {
+                time.Sleep(3 * time.Second)
+        }
+
+        logger.WarnCF("text2audioHook", "hook after LLM", map[string]any{
+                        "name":       "text2audioHook",
+                        "text":       Response,
+        })
+
+	voiceid := "female_cx"
+        if len(globalVoiceId) > 0 {
+                voiceid = globalVoiceId
+        }
+
+        cmd := exec.Command("python3", "/usr/local/text2auto.py", Response, voiceid)
+        /*logger.WarnCF("text2audioHook", "hook after LLM", map[string]any{
+                        "name":      "text2audioHook",
+                        "text":      "Start-->" + Response,
+	})*/
+
+        _, err := cmd.CombinedOutput()
+        if err != nil {
+                logger.WarnCF("text2audioHook", "hook after LLM", map[string]any{
+                        "name":      "text2audioHook",
+                        "error":     err,
+                })
+        }
+
+        /*logger.WarnCF("text2audioHook", "hook after LLM", map[string]any{
+                        "name":      "text2audioHook",
+                        "text":      "End-->" + Response,
+        })*/
+
+}
 
 func (h *Text2audioHook) AfterLLM(ctx context.Context, resp *LLMHookResponse) (*LLMHookResponse, HookDecision, error) {
 	if h == nil || resp == nil {
 		return resp, HookDecision{Action: HookActionContinue}, errors.New("null object")
 	}
 
-        logger.WarnCF("text2audioHook", "hook after LLM", map[string]any{
-			"name":       "text2audioHook",
-			"text":      resp.Response.Content,
-	})
-
-
-	cmd := exec.Command("python3", "/usr/local/text2auto.py", resp.Response.Content)
-    	_, err := cmd.CombinedOutput()
-    	if err != nil {
-		logger.WarnCF("text2audioHook", "hook after LLM", map[string]any{
-                        "name":      "text2audioHook",
-                        "text":      resp.Response.Content,
-						"error":     err,
-        	})
-    	}
+	CallTTSModel(resp.Response.Content)
 
         return resp, HookDecision{Action: HookActionContinue}, nil
 }
@@ -56,14 +102,33 @@ func SubstringFrom(fullStr, subStr string) (string, bool) {
 	return result, true
 }
 
+func SendVLModelResponse(channel, chatID, content, replyToMessageID, agentId, sessionKey string, sessionScope *session.SessionScope) error {
+	pubCtx, pubCancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer pubCancel()
 
-func CallVLModel(userPrompt string, media_data string){
-	desc_img_prompt := userPrompt//"请用中文详细描述这个图片的内容"
+	outboundCtx := bus.NewOutboundContext(channel, chatID, replyToMessageID)
+	outboundAgentID, outboundSessionKey, outboundScope := outboundTurnMetadata(
+		agentId,
+		sessionKey,
+		sessionScope,
+	)
 
-	//"请用中文描述这个图片的内容，如果内容设计几何/代数/物理/化学/数学符号，要使用专业数学符号，" +
-        //                   "如果内容是人物/动物/植物/生物照片，要提供补充基本信息，让人能了解到这个人物/动物/植物/生物的基本信息"
+	return msgBus.PublishOutbound(pubCtx, bus.OutboundMessage{
+		Context:          outboundCtx,
+		AgentID:          outboundAgentID,
+		SessionKey:       outboundSessionKey,
+		Scope:            outboundScope,
+		Content:          content,
+		ReplyToMessageID: replyToMessageID,
+	})
+}
+
+func CallVLModel(channel, chatID, replyToMessageID, agentId, sessionKey string, sessionScope *session.SessionScope){
+	desc_img_prompt := globalVLUserPromt//"请用中文详细描述这个图片的内容"
 
 	defer func() {
+		globalVLUserPromt = "" //globalReqImgBytes = ""
+
 		if err_exp := recover(); err_exp != nil {
 			logger.WarnCF("text2audioHook", "hook before LLM", map[string]any {
                                                 "name":      "text2audioHook",
@@ -73,15 +138,15 @@ func CallVLModel(userPrompt string, media_data string){
 		}
 	}()
 
-        if len(media_data) > 0 {
+        if len(globalReqImgBytes) > 0 {
 		logger.WarnCF("text2audioHook", "hook before LLM", map[string]any {
                                                 "name":      "text2audioHook",
-                                                "text":      userPrompt,
+                                                "text":      desc_img_prompt,
                 })
 
                 cmd := exec.Command("python3", "/usr/local/img2text.py", desc_img_prompt)
                 var stdinBuf bytes.Buffer
-                stdinBuf.Write([]byte(media_data))
+                stdinBuf.Write([]byte(globalReqImgBytes))
                 cmd.Stdin = &stdinBuf
 
                 output_bytes, err := cmd.CombinedOutput()
@@ -93,16 +158,20 @@ func CallVLModel(userPrompt string, media_data string){
                         output_text = string(output_bytes)
                 }
 
-		globalQueue <- output_text
+		//globalQueue <- output_text
+		globalVLUserPromt = "" //globalReqImgBytes = ""
 
-
-		globalReqImgBytes = ""
                 logger.WarnCF("text2audioHook", "hook before LLM", map[string]any {
                                                 "name":      "text2audioHook",
                                                 "text":      output_text,
                                                 "error":     err,
                 })
-        }
+
+		CallTTSModel(output_text)
+		SendVLModelResponse(channel, chatID, output_text, replyToMessageID, agentId, sessionKey, sessionScope)
+        }else {
+		globalVLUserPromt = "" //globalReqImgBytes = ""
+	}
 }
 
 func (h *Text2audioHook) BeforeLLM(ctx context.Context, req *LLMHookRequest) (*LLMHookRequest, HookDecision, error) {
@@ -125,37 +194,66 @@ func (h *Text2audioHook) BeforeLLM(ctx context.Context, req *LLMHookRequest) (*L
 	if req.Messages[last_msg_id].Content == "[image]" && req.Messages[last_msg_id].Media != nil && req.Messages[last_msg_id].Role == "user" {
 		media_len := len(req.Messages[last_msg_id].Media[0])
 		if media_len > 0 {
-			//dst := make([]byte, media_len)
-			///copy(dst, req.Messages[last_msg_id].Media[0])
-			//go CallVLModel(last_msg_id, dst)
-
 			globalReqImgBytes = strings.Clone(req.Messages[last_msg_id].Media[0])
 
 			req.Messages[last_msg_id].Media = nil
 			req.Messages[last_msg_id].Content = output_text + "*** " + "准备开始图片识别之前，请补充图片识别提示词！提示词必须以：'识别要求' 为开始" + " ***"
 
 			need_prompt = 0
-			/*req.Messages = append(req.Messages, providers.Message{
-                        	Role: "user",
-                                Content: output_text + "*** " + "图片在识别中，可能需要几分钟，请耐心等待哦！" + " ***",
-                                Media: nil,
-                        })*/
 		}
 	} else {
 
 		userPrompt, result := SubstringFrom(req.Messages[last_msg_id].Content, "识别要求")
-		if result == true && len(userPrompt) > 0 && len(globalReqImgBytes) > 0 {
-			go CallVLModel(userPrompt, globalReqImgBytes)
+		if result == true && len(userPrompt) > 0 && strings.Contains(globalReqImgBytes, "data:image/") {
+			channel := strings.Clone(req.Context.Inbound.Channel)
+			chatID := strings.Clone(req.Context.Inbound.ChatID)
+			replyToMessageID := strings.Clone(req.Context.Inbound.ReplyToMessageID)
+			agentId := strings.Clone(req.Context.Scope.AgentID)
+			sessionKey := strings.Clone(req.Meta.SessionKey)
 
-			req.Messages[last_msg_id].Content = output_text + "*** " + "图片识别中，过几分钟继续询问我, 不问我做完了也不主动通知！询问必须包含：'图片识别结束了吗' 前四个字" + " ***"
+			sessionScope := session.CloneScope(req.Context.Scope)
+
+			globalVLUserPromt = userPrompt
+			go CallVLModel(channel, chatID, replyToMessageID, agentId, sessionKey, sessionScope)
+
+			req.Messages[last_msg_id].Content = output_text + "*** " +"开始识图！" + " ***"
 			need_prompt = 0
 		}else if strings.Contains(req.Messages[last_msg_id].Content, "图片识别"){
 			need_prompt = 1
 		}else {
-			need_prompt = 0
+			userPrompt, result := SubstringFrom(req.Messages[last_msg_id].Content, "音色切换")
+			if result == true && len(userPrompt) > 0 {
+
+				if strings.Contains(userPrompt, "爸爸") {
+					globalVoiceId = "baba"
+				}else if strings.Contains(userPrompt, "男性普通话") {
+					globalVoiceId = "male_cx"
+				}else if strings.Contains(userPrompt, "女性普通话") {
+					globalVoiceId = "female_cx"
+				}else if strings.Contains(userPrompt, "男性英语调") {
+					globalVoiceId = "male_eng"
+				}else if strings.Contains(userPrompt, "女性英语调") {
+					globalVoiceId = "female_eng"
+				}else if strings.Contains(userPrompt, "蜡笔小新") {
+					globalVoiceId = "lbxiaoxin"
+				}else {
+					globalVoiceId = "female_cx"
+					userPrompt = "女性普通话"
+				}
+
+                                req.Messages[last_msg_id].Content = output_text + "*** " + "音色已修改成" + userPrompt + "。支持的音色有 爸爸/男性普通话/女性普通话/男性英语调/女性英语调/蜡笔小新" + " ***"
+				need_prompt = 0
+                        } else{
+				if strings.Contains(req.Messages[last_msg_id].Content, "识别要求") {
+					req.Messages[last_msg_id].Content = output_text + "*** " + "请重新发送图片给我！" + " ***"
+				}
+
+				need_prompt = 0
+			}
 		}
 	}
 	
+	/*
 	shouldExit := false
 	for !shouldExit{
     		select {
@@ -174,11 +272,20 @@ func (h *Text2audioHook) BeforeLLM(ctx context.Context, req *LLMHookRequest) (*L
 				shouldExit = true
     		}
 	}
+	*/
 
 	if need_prompt != 0 {
-        	req.Messages[last_msg_id].Content = output_text + "*** " + "图片识别中，过几分钟继续询问我, 不问我做完了也不主动通知！" + " ***"
+		if strings.Contains(globalReqImgBytes, "data:image/") && len(globalVLUserPromt) > 0 {
+        		req.Messages[last_msg_id].Content = output_text + "*** " + "图片识别中！" + " ***"
+		} else {
+			req.Messages[last_msg_id].Content = output_text + "*** " + "请重新发送图片给我！" + " ***"
+		}
 	}
-
+	
+	logger.WarnCF("text2audioHook", "hook before LLM", map[string]any{
+                "name":       "text2audioHook",
+                "Last req message":  req.Messages[last_msg_id].Content,
+        })
 
         return req, HookDecision{Action: HookActionContinue}, nil
 }
