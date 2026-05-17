@@ -16,7 +16,6 @@ import (
 
 type Text2audioHook struct{}
 
-//var globalQueue = make(chan string, 1000)
 var globalReqImgBytes string
 var globalVoiceId string
 var globalVLUserPromt string
@@ -158,7 +157,6 @@ func CallVLModel(channel, chatID, replyToMessageID, agentId, sessionKey string, 
                         output_text = string(output_bytes)
                 }
 
-		//globalQueue <- output_text
 		globalVLUserPromt = "" //globalReqImgBytes = ""
 
                 logger.WarnCF("text2audioHook", "hook before LLM", map[string]any {
@@ -167,8 +165,8 @@ func CallVLModel(channel, chatID, replyToMessageID, agentId, sessionKey string, 
                                                 "error":     err,
                 })
 
-		CallTTSModel(output_text)
 		SendVLModelResponse(channel, chatID, output_text, replyToMessageID, agentId, sessionKey, sessionScope)
+		CallTTSModel(output_text)
         }else {
 		globalVLUserPromt = "" //globalReqImgBytes = ""
 	}
@@ -253,27 +251,6 @@ func (h *Text2audioHook) BeforeLLM(ctx context.Context, req *LLMHookRequest) (*L
 		}
 	}
 	
-	/*
-	shouldExit := false
-	for !shouldExit{
-    		select {
-    			case msg := <-globalQueue:
-        			// 成功拿到数据
-
-        			req.Messages = append(req.Messages, providers.Message{
-					Role: "user",
-					Content: output_text + "*** " + msg + " ***",
-					Media: nil,
-				})
-
-				need_prompt = 0
-    			default:
-        			// 队列已经空了，或者那一瞬间没有新数据了，立刻打破循环
-				shouldExit = true
-    		}
-	}
-	*/
-
 	if need_prompt != 0 {
 		if strings.Contains(globalReqImgBytes, "data:image/") && len(globalVLUserPromt) > 0 {
         		req.Messages[last_msg_id].Content = output_text + "*** " + "图片识别中！" + " ***"
